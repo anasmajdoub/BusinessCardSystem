@@ -5,22 +5,18 @@ VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EE1EFA74-84B0-4D85-96BB-7C66C093C174}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E6186166-8BFD-4A72-8CD7-EFB69253AF0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BizCardSystem.Domain", "BusinessCardSystem.Domain\BizCardSystem.Domain.csproj", "{21E46A89-F5B0-4A58-B2B4-8FC96766D6CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BizCardSystem.Domain", "BusinessCardSystem.Domain\BizCardSystem.Domain.csproj", "{21E46A89-F5B0-4A58-B2B4-8FC96766D6CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BizCardSystem.Application", "BizCardSystem.Application\BizCardSystem.Application.csproj", "{A40534C0-CE99-47E3-A649-4F31A040CDBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BizCardSystem.Application", "BizCardSystem.Application\BizCardSystem.Application.csproj", "{A40534C0-CE99-47E3-A649-4F31A040CDBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BizCardSystem.Infrastructure", "BizCardSystem.Infrastructure\BizCardSystem.Infrastructure.csproj", "{20D0B2B7-CF16-46A9-9B48-0C2849857036}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BizCardSystem.Infrastructure", "BizCardSystem.Infrastructure\BizCardSystem.Infrastructure.csproj", "{20D0B2B7-CF16-46A9-9B48-0C2849857036}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BizCardSystem.Api", "BizCardSystem.Presentation\BizCardSystem.Api.csproj", "{28C9FA1C-F1D6-422E-98FC-24BEBB0A0A4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BizCardSystem.Api", "BizCardSystem.Presentation\BizCardSystem.Api.csproj", "{28C9FA1C-F1D6-422E-98FC-24BEBB0A0A4F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{92A40465-60CD-499D-BB16-102726092CE6}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{BB01FA78-50E4-4946-82EB-593D1E45643D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -29,4 +29,8 @@
     <ProjectReference Include="..\BizCardSystem.Application\BizCardSystem.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>
