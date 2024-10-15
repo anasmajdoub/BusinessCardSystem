@@ -1,0 +1,117 @@
+<div class="container">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Business Card Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="businessCardForm" (ngSubmit)="onSubmit()">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" required>
+              <mat-error *ngIf="businessCardForm.get('name')?.hasError('required')">Name is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Gender</mat-label>
+              <mat-select formControlName="gender" required>
+                <option [value]="''">Select Gender</option>
+                <mat-option  *ngFor="let gender of genderOptions let i = index" [value]="i+1">{{gender}}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="businessCardForm.get('gender')?.hasError('required')">Gender is required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Date of Birth</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="dateOfBirth" required>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="businessCardForm.get('dateOfBirth')?.hasError('required')">Date of Birth is required</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Phone</mat-label>
+              <input matInput type="tel" formControlName="phone" required>
+              <mat-error *ngIf="businessCardForm.get('phone')?.hasError('required')">Phone is required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email" required>
+              <mat-error *ngIf="businessCardForm.get('email')?.hasError('required')">Email is required</mat-error>
+              <mat-error *ngIf="businessCardForm.get('email')?.hasError('email')">Invalid email format</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Country</mat-label>
+              <input matInput formControlName="country"> 
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>City</mat-label>
+              <input matInput formControlName="city"> 
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>State</mat-label>
+              <input matInput formControlName="state"> 
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>ZipCode</mat-label>
+              <input matInput formControlName="zipCode"> 
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Street</mat-label>
+              <input matInput formControlName="street"> 
+            </mat-form-field>
+          </div>
+          <div class="file-upload-section">
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" #fileInput style="display: none">
+            <button mat-raised-button type="button" (click)="fileInput.click()" color="accent">
+              <mat-icon>cloud_upload</mat-icon> Upload Photo (Max 1MB)
+            </button>
+            <span *ngIf="selectedFile" class="file-name">{{ selectedFile.name }}</span>
+          </div>
+
+          <div class="file-upload-container" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+            <mat-icon>cloud_upload</mat-icon>
+            <p>Drag and drop XML, CSV, or QR code files here</p>
+            <input type="file" (change)="onImportFileSelected($event)" accept=".xml,.csv,image/*" #importFileInput style="display: none">
+            <button mat-stroked-button type="button" (click)="importFileInput.click()" color="primary">
+              Import File
+            </button>
+          </div>
+          
+          <mat-card *ngIf="previewData" class="preview-card">
+            <mat-card-header>
+              <mat-card-title>Business Card Preview</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="preview-content">
+                <div class="preview-text">
+                  <p><strong>Name:</strong> {{ previewData.name }}</p>
+                  <p><strong>Gender:</strong> {{ previewData.gender }}</p>
+                  <p><strong>Date of Birth:</strong> {{ previewData.dateOfBirth | date }}</p>
+                  <p><strong>Email:</strong> {{ previewData.email }}</p>
+                  <p><strong>Phone:</strong> {{ previewData.phone }}</p>
+                  <p><strong>Address:</strong> {{ previewData.address }}</p>
+                </div>
+                <div class="preview-image" *ngIf="previewData.photo">
+                  <img [src]="previewData.photo" alt="Business Card Photo">
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          <div class="submit-button">
+            <button mat-raised-button color="primary" type="submit" [disabled]="!businessCardForm.valid">
+              <mat-icon>send</mat-icon> Submit
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
