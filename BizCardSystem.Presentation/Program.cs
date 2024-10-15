@@ -1,3 +1,8 @@
+using BizCardSystem.Api.Middleware;
+using BizCardSystem.Application;
+using BizCardSystem.Infrastructure;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -25,6 +30,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthorization();
 
