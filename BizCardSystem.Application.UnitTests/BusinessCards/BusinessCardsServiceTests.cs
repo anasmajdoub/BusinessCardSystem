@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using BizCardSystem.Application.Abstractions.Data;
+using BizCardSystem.Application.BusinessCards.Dtos.Get;
 using BizCardSystem.Application.Repositories;
 using BizCardSystem.Application.Services;
 using BizCardSystem.Domain.BusinessCards;
+using BizCardSystem.Domain.BusinessCards.Errors;
 using BizCardSystem.Domain.FileHelper;
 using FluentValidation;
 using FluentValidation.Results;
@@ -92,6 +94,73 @@ public class BusinessCardsServiceTests
 
         await _mockRepositoryMock.Received(1).CreateAsync(businessCards[0]);
         await _mockRepositoryMock.DidNotReceive().CreateAsync(businessCards[1]);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_ShouldReturnSuccess_WhenBusinessCardExists()
+    {
+        // Arrange
+        int id = 1;
+        var businessCard = new BusinessCard { Id = id, Name = "Test" };
+        _mockRepositoryMock.GetByIdAsync(id).Returns(businessCard);
+
+        var dto = new GetBizResponse { Id = id, Name = "Test" };
+        _mockMapper.Map<GetBizResponse>(businessCard).Returns(dto);
+
+        // Act
+        var result = await _service.GetByIdAsync(id);
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.Equal(dto, result.Value);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_ShouldReturnFailure_WhenBusinessCardDoesNotExist()
+    {
+        // Arrange
+        int id = 1;
+        _mockRepositoryMock.GetByIdAsync(id).Returns((BusinessCard)null);
+
+        // Act
+        var result = await _service.GetByIdAsync(id);
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        Assert.Equal(BusinessCardErrors.NotFound, result.Error);
+    }
+    [Fact]
+    public async Task ExportToCsv_ShouldReturnByteArray_WhenBusinessCardExists()
+    {
+        // Arrange
+        int id = 1;
+        var businessCard = new BusinessCard { Id = id, Name = "Test" };
+        _mockRepositoryMock.GetByIdAsync(id).Returns(businessCard);
+
+        var byteArray = new byte[] { 1, 2, 3 };
+        _mockFileParserManager.CreateCSVFile(Arg.Any<List<FileParser>>()).Returns(byteArray);
+
+        // Act
+        var result = await _service.ExportToCsv(id);
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.Equal(byteArray, result.Value);
+    }
+
+    [Fact]
+    public async Task ExportToCsv_ShouldReturnFailure_WhenBusinessCardDoesNotExist()
+    {
+        // Arrange
+        int id = 1;
+        _mockRepositoryMock.GetByIdAsync(id).Returns((BusinessCard)null);
+
+        // Act
+        var result = await _service.ExportToCsv(id);
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        Assert.Equal(BusinessCardErrors.NotFound, result.Error);
     }
 
 }
