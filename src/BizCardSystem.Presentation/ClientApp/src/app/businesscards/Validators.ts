@@ -40,6 +40,7 @@ export function businessCardValidator(): ValidatorFn {
     const dateOfBirth = control.get('dateOfBirth');
     const email = control.get('email');
     const phone = control.get('phone');
+    const photo = control.get('photo');
     const address = control.get('address');
 
     const errors: ValidationErrors = {};
@@ -60,9 +61,6 @@ export function businessCardValidator(): ValidatorFn {
       errors['emailInvalid'] = 'Invalid email format.';
     }
 
-    if (phone && (!phone.value || !/^\+?[1-9]\d{1,14}$/.test(phone.value))) {
-      errors['phoneInvalid'] = 'Invalid phone number format.';
-    }
     if (address) {
       const addressErrors = addressValidator()(address);
       if (addressErrors) {
@@ -77,30 +75,68 @@ export function businessCardValidator(): ValidatorFn {
 export function base64ImageValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
- 
+
+    // If no value, return null (no error)
     if (!value) {
       return null;
     }
 
- 
+    // Check if the value is a valid base64 string
     const base64Data = value.includes(',') ? value.split(',')[1] : value;
 
     const base64Pattern = /^[A-Za-z0-9+/]+={0,2}$/;
 
-     if (base64Data.length % 4 !== 0) {
+    // Check if the string length is a multiple of 4
+    if (base64Data.length % 4 !== 0) {
       return { photoInvalid: 'The provided string is not a valid base64 string.' };
     }
 
-     if (!base64Pattern.test(base64Data)) {
+    // Check if the string matches the base64 pattern
+    if (!base64Pattern.test(base64Data)) {
       return { photoInvalid: 'The provided string is not a valid base64 string.' };
     }
 
-     const sizeInBytes = (base64Data.length * 3) / 4;
+    // Check if the size is less than 1MB
+    const sizeInBytes = (base64Data.length * 3) / 4;
     const maxSizeInBytes = 1 * 1024 * 1024;
     if (sizeInBytes > maxSizeInBytes) {
       return { photoSizeInvalid: 'Image file size must be less than 1 MB.' };
     }
 
-     return null;
+    // If all checks pass, return null (no error)
+    return null;
   };
+}
+export function extractFileSizeMB(fileBase64: string): number {
+  const base64WithoutPrefix = fileBase64.split(',')[1] || fileBase64;
+  
+  const fileSizeBytes = atob(base64WithoutPrefix).length;
+
+  const fileSizeMB = fileSizeBytes / (1024 * 1024);
+
+  return Number(fileSizeMB.toFixed(2));
+}
+
+export function isBase64String(base64DataUrl: string): boolean {
+  if (!base64DataUrl) {
+    return false;
+  }
+
+  const base64Pattern = /^data:image\/(png|jpeg|jpg|gif|svg\+xml);base64,[a-zA-Z0-9+/]*={0,2}$/;
+  return base64Pattern.test(base64DataUrl);
+}
+export function validateBase64File(base64String: string): ValidationErrors | null {
+    
+  const value=isBase64String(base64String);
+
+  if(!value){
+
+    return { photoInvalid: 'The provided string is not a valid base64 string.' };
+
+  } 
+  if(extractFileSizeMB(base64String) > 1){
+    return { photoSizeInvalid: 'Image file size must be less than 1 MB.' };
+  }
+ 
+  return null;
 }

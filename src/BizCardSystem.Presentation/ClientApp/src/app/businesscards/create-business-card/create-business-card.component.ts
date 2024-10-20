@@ -3,7 +3,7 @@ import { MaterialModule } from '../../shared/material/material.module';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Gender } from '../../modules/enums/Gender';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { addressValidator, businessCardValidator } from '../Validators';
+import { addressValidator, businessCardValidator, validateBase64File } from '../Validators';
 import { BusinessCardService } from '../../shared/services/business-card.service';
 import { BusinessCardRequset } from '../../modules/businesscards/BusinessCardRequset';
 import { Router } from '@angular/router';
@@ -55,15 +55,28 @@ export class CreateBusinessCardComponent {
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = () => {
-        this.businessCardForm.patchValue({ photo: reader.result });
-        this.businessCardForm.get('photo')?.updateValueAndValidity();
+        // this.businessCardForm.patchValue({ photo: reader.result });
+        // this.businessCardForm.get('photo')?.updateValueAndValidity();
+
+        const base64String = reader.result as string;
+
+        // Validate base64 size and format before setting the value
+        const errors = validateBase64File(base64String);
+
+        if (!errors) {
+          // Only update the form control if no errors are found
+          this.businessCardForm.get('photo')?.setValue(base64String);
+        } else {
+          // Set errors manually without causing recursive revalidation
+          this.businessCardForm.get('photo')?.setErrors(errors);
+        }
       };
       reader.readAsDataURL(file);
     }
   }
 
   onSubmit() {
-    console.log(this.businessCardForm.errors);
+
     if (this.businessCardForm.valid) {
       this.isFormSubmitted = true;
       this.previewData = this.businessCardForm.value;

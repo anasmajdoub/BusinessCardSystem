@@ -18,9 +18,7 @@ public class AddressValidator : AbstractValidator<Address>
         RuleFor(a => a.State)
             .MaximumLength(50).WithMessage("State cannot exceed 50 characters.")
             .When(a => !string.IsNullOrEmpty(a.City));
-        RuleFor(a => a.ZipCode)
-            .Matches(@"^\d{5}(-\d{4})?$").WithMessage("Invalid postal code format.")
-            .When(a => !string.IsNullOrEmpty(a.ZipCode));
+
 
         RuleFor(a => a.Country)
             .MaximumLength(50).WithMessage("Country cannot exceed 50 characters.")

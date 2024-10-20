@@ -22,16 +22,9 @@ namespace BizCardSystem.Application.BusinessCards.Dtos.Create
 
             RuleFor(card => card.Email)
                 .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Invalid email format.")
-                .MustAsync(async (email, _) =>
-                {
-                    return await businessCardsRepository.IsEmailUniqueAsync(email);
+                .EmailAddress().WithMessage("Invalid email format.");
 
-                }).WithMessage("The email must be unique");
 
-            RuleFor(card => card.Phone)
-                .NotEmpty().WithMessage("Phone number is required.")
-                .Matches(@"^\+?[1-9]\d{1,14}$").WithMessage("Invalid phone number format.");
 
             RuleFor(card => card.Photo)
                 .NotEmpty().WithMessage("Photo is required.")

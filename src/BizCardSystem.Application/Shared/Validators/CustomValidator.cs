@@ -67,7 +67,7 @@ namespace BizCardSystem.Application.Shared.Validators
             if (file == null || file.Length == 0)
                 return false;
 
-            var validExtensions = new[] { ".xml", ".csv", ".qr" };
+            var validExtensions = new[] { ".xml", ".csv", ".png", ".jpg", ".jpeg", ".gif" };
             var extension = Path.GetExtension(file.FileName).ToLower();
             if (!Array.Exists(validExtensions, ext => ext == extension))
                 return false;

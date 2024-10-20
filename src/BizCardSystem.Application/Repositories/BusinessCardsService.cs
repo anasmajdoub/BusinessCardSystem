@@ -26,22 +26,15 @@ public class BusinessCardsService(
     IValidator<BusinessCard> validator
     ) : IBusinessCardsService
 {
-    public async Task<Result<BusinessCard>> CreateBusinessCardByFileAsync(IFormFile file)
+    public async Task<Result<CreateBizRequest>> CreateBusinessCardByFileAsync(IFormFile file)
     {
         var bizResponses = fileParserManager.ParseFile(file);
         var businessCards = _mapper.Map<List<BusinessCard>>(bizResponses);
 
-        foreach (var businessCard in businessCards)
-        {
-            var result = await validator.ValidateAsync(businessCard);
+        var businessCard = businessCards.FirstOrDefault();
 
-            if (result.IsValid)
-            {
-                await _businessCardsRepository.CreateAsync(businessCard);
-            }
-        }
-
-        return Result.Success(businessCards.FirstOrDefault());
+        var businessCardRequest = _mapper.Map<CreateBizRequest>(businessCard);
+        return Result.Success(businessCardRequest);
     }
 
     public async Task<Result<int>> CreateAsync(CreateBizRequest entityDto)
@@ -144,7 +137,7 @@ public interface IBusinessCardsService
     Task<Result<int>> CreateAsync(CreateBizRequest entityDto);
     Task<Result<int>> UpdateAsync(UpdateBizRequest entityDto);
     Task<Result> DeleteAsync(int id);
-    Task<Result<BusinessCard>> CreateBusinessCardByFileAsync(IFormFile file);
+    Task<Result<CreateBizRequest>> CreateBusinessCardByFileAsync(IFormFile file);
     Task<Result<byte[]>> ExportToCsv(int id);
     Task<Result<byte[]>> ExportToXml(int id);
 

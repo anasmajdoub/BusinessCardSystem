@@ -22,12 +22,7 @@ namespace BizCardSystem.Application.BusinessCards.Dtos.Create
 
             RuleFor(card => card.Email)
                 .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Invalid email format.")
-                .MustAsync(async (email, _) =>
-                {
-                    return await businessCardsRepository.IsEmailUniqueAsync(email);
-
-                }).WithMessage("The email must be unique");
+                .EmailAddress().WithMessage("Invalid email format.");
 
             RuleFor(card => card.Phone)
                 .NotEmpty().WithMessage("Phone number is required.")
