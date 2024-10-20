@@ -46,6 +46,7 @@
       ```sh
       Update-Database
       ```
+      In the database folder, locate the database project and find the stored procedure `SpGetALLBusinessCards`. Apply it to your data and retrieve the script from the database project scripts titled `DataToImport`.
 
 4. **Run the Application**:
     ```sh

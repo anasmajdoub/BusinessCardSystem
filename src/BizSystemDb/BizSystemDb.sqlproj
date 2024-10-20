@@ -67,6 +67,6 @@
     <Build Include="dbo\Tables\__EFMigrationsHistory.sql" />
     <Build Include="dbo\Tables\BusinessCard.sql" />
     <Build Include="dbo\Stored Procedures\SpGetALLBusinessCards.sql" />
-    <None Include="Scripts\ScriptsIgnoredOnImport.sql" />
+    <None Include="Scripts\DataToImport.sql" />
   </ItemGroup>
 </Project>

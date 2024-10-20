@@ -47,7 +47,14 @@ export class IndexBusinessCardComponent {
     {
   
       this.loadBusinessCards();
-  
+      this.options.get('dateOfBirth')?.valueChanges.subscribe((rawDate) => {
+        if (rawDate) {
+          const formattedDate = `${new Date(rawDate).getFullYear()}-${(new Date(rawDate).getMonth() + 1).toString().padStart(2, '0')}-${new Date(rawDate).getDate().toString().padStart(2, '0')}`;
+          if (formattedDate !== rawDate) {
+            this.options.get('dateOfBirth')?.setValue(formattedDate, { emitEvent: false });
+          }
+        }
+      });
       this.options.valueChanges.subscribe((filterValues) => {
         this.businessCardsfilter = { ...this.businessCardsfilter, ...filterValues };
         this.loadBusinessCards();
