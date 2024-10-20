@@ -44,7 +44,7 @@ public class BusinessCardsService(
         return Result.Success<int>(entity.Id);
     }
 
-    public async Task<Result> DeleteAsync(int id)
+    public async Task<Result<int>> DeleteAsync(int id)
     {
         await _businessCardsRepository.DeleteAsync(id);
         return Result.Success(id);
@@ -136,7 +136,7 @@ public interface IBusinessCardsService
     Task<Result<GetBizResponse>> GetByIdAsync(int id);
     Task<Result<int>> CreateAsync(CreateBizRequest entityDto);
     Task<Result<int>> UpdateAsync(UpdateBizRequest entityDto);
-    Task<Result> DeleteAsync(int id);
+    Task<Result<int>> DeleteAsync(int id);
     Task<Result<CreateBizRequest>> CreateBusinessCardByFileAsync(IFormFile file);
     Task<Result<byte[]>> ExportToCsv(int id);
     Task<Result<byte[]>> ExportToXml(int id);
