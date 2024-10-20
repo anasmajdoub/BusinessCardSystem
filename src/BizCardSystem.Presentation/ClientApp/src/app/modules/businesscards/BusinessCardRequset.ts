@@ -1,0 +1,12 @@
+import { Gender } from "../enums/Gender";
+import { Address } from "./Address";
+
+export interface BusinessCardRequset{
+    name: string;
+    gender: Gender;
+    dateOfBirth: Date;
+    email: string;
+    phone: string;
+    photo: string;
+    address: Address;
+}

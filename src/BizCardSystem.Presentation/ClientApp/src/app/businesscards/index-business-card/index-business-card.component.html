@@ -1,0 +1,76 @@
+<div class="example-container">
+    <form [formGroup]="options" (ngSubmit)="applyFilter()">
+      <mat-form-field>
+        <input matInput formControlName="name" placeholder="Name">
+      </mat-form-field>
+  
+      <mat-form-field>
+        <input matInput formControlName="email" placeholder="Email">
+      </mat-form-field>
+  
+      <mat-form-field>
+        <input matInput formControlName="phone" placeholder="Phone">
+      </mat-form-field>
+      
+      <mat-form-field>
+        <mat-select formControlName="gender" placeholder="Select Gender">
+          <mat-option *ngFor="let gender of genders; let index = index" [value]="index">{{ gender }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    
+      <mat-form-field>
+        <input matInput [matDatepicker]="picker" formControlName="dateOfBirth" placeholder="Date of Birth">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" type="submit">Apply Filter</button>
+      <button mat-raised-button color="warn" type="button" (click)="options.reset()">Reset</button>
+    </form>
+  </div>
+   
+  <section *ngIf="!isLoading; else loading">
+    <div class="cards-container">
+      <div *ngFor="let card of businessCards; let index = index" class="card-item">
+        <mat-card class="example-card" appearance="outlined">
+          <div class="card-content-container">
+            <div class="card-photo">
+              <img mat-card-md-image [src]="card?.photo" alt="Business Card Image">
+            </div>
+            <div class="card-info">
+              <mat-card-title>{{ card?.name }}</mat-card-title>
+              <p>Gender: {{ card?.gender }}</p>
+              <p>Address: {{ card?.address }}</p>
+              <p>Email: {{ card?.email }}</p>
+              <p>Phone: {{ card?.phone }}</p>
+              <p *ngIf="card?.dateofBirth">Date of Birth: {{ card?.dateofBirth | date }}</p>
+            </div>
+          </div>
+          <mat-card-footer class="example-card-footer">
+            <mat-chip-set aria-label="Business Card Actions" class="my-chip-set">
+              <button mat-icon-button matTooltip="Download information as CSV" (click)="downloadCsv(card.id)" aria-label="Download CSV" style="color: green;">
+                <mat-icon>download</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Download information as XML" (click)="downloadXml(card.id)" aria-label="Download XML" style="color: blue;">
+                <mat-icon>file_download</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Delete" (click)="deleteCard(card.id)" aria-label="Delete" style="color: red;">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-chip-set>
+          </mat-card-footer>
+        </mat-card>
+      </div>
+    </div>
+  </section>
+  <ng-template #loading>
+    <p>Loading business cards...</p>
+  </ng-template>
+  <mat-paginator [length]="totalRecords"
+                [pageSize]="this.businessCardsfilter.pageSize"
+                [pageIndex]="this.businessCardsfilter.pageIndex"
+                [pageSizeOptions]="[5, 10, 25, 100]"
+                (page)="onPageChange($event)"
+                showFirstLastButtons
+                >
+  </mat-paginator>

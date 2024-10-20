@@ -1,0 +1,9 @@
+<div mat-dialog-content class="delete-dialog-content">
+  <mat-icon style="height: 50px; width: 50px;" class="warning-icon" color="warn">warning</mat-icon>
+  <h2 mat-dialog-title>Delete Confirmation</h2>
+  <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+</div>
+<div mat-dialog-actions class="delete-dialog-actions">
+  <button mat-flat-button color="warn" (click)="confirm()">Confirm</button>
+  <button mat-button (click)="dismiss()">Cancel</button>
+</div>

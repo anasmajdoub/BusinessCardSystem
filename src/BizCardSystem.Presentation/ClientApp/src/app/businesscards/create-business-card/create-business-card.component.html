@@ -1,0 +1,150 @@
+<nav mat-tab-nav-bar class="import-nav">
+  <a mat-tab-link *ngFor="let link of ['Import XML', 'Import CSV', 'Import QR Code']" [routerLink]="link">
+    <mat-icon [matTooltip]="link">cloud_download</mat-icon> {{ link }}
+  </a>
+</nav>
+
+<div class="form-container" *ngIf="!isFormSubmitted">
+  <form [formGroup]="businessCardForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" [attr.required]="true">
+    </mat-form-field>
+    <div *ngIf="businessCardForm.get('name')?.errors?.['required']" class="error red-text">
+      Name is required.
+    </div>
+    <div *ngIf="businessCardForm.get('name')?.errors?.['maxlength']" class="error red-text">
+      Name cannot exceed 100 characters.
+    </div>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Gender</mat-label>
+      <mat-select formControlName="gender" [attr.required]="true">
+        <mat-option *ngFor="let gender of genders let i = index" [value]="i+1">{{ gender }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div *ngIf="businessCardForm.get('gender')?.errors?.['required']" class="error red-text">
+      Gender is required.
+    </div>
+    <div *ngIf="businessCardForm.get('gender')?.errors?.['genderInvalid']" class="error red-text">
+      Invalid gender selection.
+    </div>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Date of Birth</mat-label>
+      <input matInput formControlName="dateOfBirth" [matDatepicker]="picker" [attr.required]="true">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <div *ngIf="businessCardForm.get('dateOfBirth')?.errors?.['required']" class="error red-text">
+      Date of birth is required.
+    </div>
+    <div *ngIf="businessCardForm.get('dateOfBirth')?.errors?.['dateOfBirthInvalid']" class="error red-text">
+      Date of birth cannot be in the future.
+    </div>
+    <div *ngIf="businessCardForm.get('dateOfBirth')?.errors?.['ageExceedsLimit']" class="error red-text">
+      Age cannot exceed 120 years.
+    </div>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" [attr.required]="true">
+    </mat-form-field>
+    <div *ngIf="businessCardForm.get('email')?.errors?.['required']" class="error red-text">
+      Email is required.
+    </div>
+    <div *ngIf="businessCardForm.get('email')?.errors?.['email']" class="error red-text">
+      Invalid email format.
+    </div>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Phone</mat-label>
+      <input matInput formControlName="phone" [attr.required]="true">
+    </mat-form-field>
+    <div *ngIf="businessCardForm.get('phone')?.errors?.['required']" class="error red-text">
+      Phone number is required.
+    </div>
+    <div *ngIf="businessCardForm.get('phone')?.errors?.['phoneInvalid']" class="error red-text">
+      Invalid phone number format.
+    </div>
+
+    <div formGroupName="address" class="address-fields">
+      <mat-form-field appearance="fill">
+        <mat-label>Street</mat-label>
+        <input matInput formControlName="street">
+      </mat-form-field>
+      <div *ngIf="businessCardForm.get('address.street')?.errors?.['streetLength']" class="error red-text">
+        Street cannot exceed 100 characters.
+      </div>
+
+      <mat-form-field appearance="fill">
+        <mat-label>City</mat-label>
+        <input matInput formControlName="city">
+      </mat-form-field>
+      <div *ngIf="businessCardForm.get('address.city')?.errors?.['cityLength']" class="error red-text">
+        City cannot exceed 50 characters.
+      </div>
+
+      <mat-form-field appearance="fill">
+        <mat-label>State</mat-label>
+        <input matInput formControlName="state">
+      </mat-form-field>
+      <div *ngIf="businessCardForm.get('address.state')?.errors?.['stateLength']" class="error red-text">
+        State cannot exceed 50 characters.
+      </div>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Zip Code</mat-label>
+        <input matInput formControlName="zipCode">
+      </mat-form-field>
+      <div *ngIf="businessCardForm.get('address.zipCode')?.errors?.['zipCodeFormat']" class="error red-text">
+        Invalid postal code format.
+      </div>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Country</mat-label>
+        <input matInput formControlName="country">
+      </mat-form-field>
+      <div *ngIf="businessCardForm.get('address.country')?.errors?.['countryLength']" class="error red-text">
+        Country cannot exceed 50 characters.
+      </div>
+    </div>
+
+    <div class="photo-upload">
+      <label for="photo">Photo</label>
+      <input id="photo" type="file" accept="image/*" (change)="onFileSelected($event)">
+      <div *ngIf="businessCardForm.get('photo')?.value">
+        Selected file: {{ businessCardForm.get('photo')?.value?.name }}
+      </div>
+      <div *ngIf="businessCardForm.get('photo')?.errors?.['required']" class="error red-text">
+        The Photo is required.
+      </div>
+      <div *ngIf="businessCardForm.get('photo')?.errors?.['photoInvalid']" class="error red-text">
+        The provided string is not a valid base64 string.
+      </div>
+      <div *ngIf="businessCardForm.get('photo')?.errors?.['photoSizeInvalid']" class="error red-text">
+        Image file size must be less than 1 MB.
+      </div>
+    </div>
+
+    <button mat-raised-button color="primary" type="submit">Submit</button>
+  </form>
+</div>
+
+<div *ngIf="previewData" class="preview-section">
+  <h3>Preview:</h3>
+  <img *ngIf="previewData?.photo" [src]="previewData.photo" alt="Business Card Photo" class="preview-image">
+  <p><strong>Name:</strong> {{ previewData?.name }}</p>
+  <p><strong>Gender:</strong> {{ previewData?.gender }}</p>
+  <p><strong>Date of Birth:</strong> {{ previewData?.dateOfBirth }}</p>
+  <p><strong>Email:</strong> {{ previewData?.email }}</p>
+  <p><strong>Phone:</strong> {{ previewData?.phone }}</p>
+  <p *ngIf="previewData?.address">
+    <strong>Address:</strong>
+    {{ previewData?.address?.street }}, {{ previewData?.address?.city }},
+    {{ previewData?.address?.state }}, {{ previewData?.address?.zipCode }},
+    {{ previewData?.address?.country }}
+  </p>
+  <button mat-raised-button color="primary" (click)="onSave()">Save</button>
+  <button mat-raised-button (click)="onBack()">Back</button>
+</div>

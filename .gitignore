@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/src/BizCardSystem.Presentation/ClientApp/.angular/cache/18.2.9/business-cards
+/src/BizCardSystem.Presentation/ClientApp/.vscode

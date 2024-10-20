@@ -1,0 +1,38 @@
+/* delete-popup.component.css */
+.delete-dialog-content {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .warning-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+  }
+  
+  .delete-dialog-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px 0;
+  }
+  
+  button[mat-flat-button] {
+    min-width: 100px;
+  }
+  
+  /* one-button-popup.component.css */
+  .one-button-dialog-content {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .success-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+  }
+  
+  .one-button-dialog-actions {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+  }
