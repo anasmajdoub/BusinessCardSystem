@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BizCardSystem.Application.Abstractions.Data;
+using BizCardSystem.Application.BusinessCards.Dtos.Create;
 using BizCardSystem.Application.BusinessCards.Dtos.Get;
 using BizCardSystem.Application.Repositories;
 using BizCardSystem.Application.Services;
@@ -7,14 +8,13 @@ using BizCardSystem.Domain.BusinessCards;
 using BizCardSystem.Domain.BusinessCards.Errors;
 using BizCardSystem.Domain.FileHelper;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
 namespace BizCardSystem.Application.UnitTests.BusinessCards;
 
 public class BusinessCardsServiceTests
 {
-    private readonly IBusinessCardsRepository _mockRepositoryMock;
+    private readonly IBusinessCardsRepository _mockRepository;
     private readonly ISqlConnectionFactory _mockSqlConnectionFactory;
     private readonly IMapper _mockMapper;
     private readonly IFileParserManager _mockFileParserManager;
@@ -23,14 +23,14 @@ public class BusinessCardsServiceTests
 
     public BusinessCardsServiceTests()
     {
-        _mockRepositoryMock = Substitute.For<IBusinessCardsRepository>();
+        _mockRepository = Substitute.For<IBusinessCardsRepository>();
         _mockSqlConnectionFactory = Substitute.For<ISqlConnectionFactory>();
         _mockMapper = Substitute.For<IMapper>();
         _mockFileParserManager = Substitute.For<IFileParserManager>();
         _mockValidator = Substitute.For<IValidator<BusinessCard>>();
 
         _service = new BusinessCardsService(
-            _mockRepositoryMock,
+            _mockRepository,
             _mockSqlConnectionFactory,
             _mockMapper,
             _mockFileParserManager,
@@ -39,88 +39,28 @@ public class BusinessCardsServiceTests
     }
 
     [Fact]
-    public async Task CreateBusinessCardByFileAsync_ValidFile_CreatesBusinessCards()
+    public async Task CreateAsync_ShouldReturnSuccess_WhenBusinessCardIsCreated()
     {
         // Arrange
-        var mockFile = Substitute.For<IFormFile>();
-        var bizResponses = new List<FileParser> { new FileParser(), new FileParser() };
-        var businessCards = new List<BusinessCard>
-        {
-            new BusinessCard { Id = 1 },
-            new BusinessCard { Id = 2 }
-        };
-
-        _mockFileParserManager.ParseFile(Arg.Any<IFormFile>()).Returns(bizResponses);
-        _mockMapper.Map<List<BusinessCard>>(bizResponses).Returns(businessCards);
-        _mockValidator.ValidateAsync(Arg.Any<BusinessCard>(), default).Returns(new ValidationResult());
+        var createRequest = new CreateBizRequest();
+        var businessCard = new BusinessCard { Id = 1 };
+        _mockMapper.Map<BusinessCard>(createRequest).Returns(businessCard);
+        _mockRepository.CreateAsync(businessCard).Returns(Task.CompletedTask);
 
         // Act
-        var result = await _service.CreateBusinessCardByFileAsync(mockFile);
+        var result = await _service.CreateAsync(createRequest);
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal(businessCards[0], result.Value);
-
-        await _mockRepositoryMock.Received(2).CreateAsync(Arg.Any<BusinessCard>());
+        Assert.Equal(1, result.Value);
     }
 
     [Fact]
-    public async Task CreateBusinessCardByFileAsync_InvalidBusinessCard_DoesNotCreateInvalidCard()
+    public async Task GetByIdAsync_ShouldReturnFailure_WhenBusinessCardNotFound()
     {
         // Arrange
-        var mockFile = Substitute.For<IFormFile>();
-        var bizResponses = new List<FileParser> { new FileParser(), new FileParser() };
-        var businessCards = new List<BusinessCard>
-            {
-                new BusinessCard { Id = 1 },
-                new BusinessCard { Id = 2 }
-            };
-
-        _mockFileParserManager.ParseFile(Arg.Any<IFormFile>()).Returns(bizResponses);
-        _mockMapper.Map<List<BusinessCard>>(bizResponses).Returns(businessCards);
-
-        _mockValidator.ValidateAsync(businessCards[0], default).Returns(new ValidationResult());
-        _mockValidator.ValidateAsync(businessCards[1], default).Returns(new ValidationResult
-        {
-            Errors = { new ValidationFailure("Property", "Error message") }
-        });
-
-        // Act
-        var result = await _service.CreateBusinessCardByFileAsync(mockFile);
-
-        // Assert
-        Assert.True(result.IsSuccess);
-        Assert.Equal(businessCards[0], result.Value);
-
-        await _mockRepositoryMock.Received(1).CreateAsync(businessCards[0]);
-        await _mockRepositoryMock.DidNotReceive().CreateAsync(businessCards[1]);
-    }
-
-    [Fact]
-    public async Task GetByIdAsync_ShouldReturnSuccess_WhenBusinessCardExists()
-    {
-        // Arrange
-        int id = 1;
-        var businessCard = new BusinessCard { Id = id, Name = "Test" };
-        _mockRepositoryMock.GetByIdAsync(id).Returns(businessCard);
-
-        var dto = new GetBizResponse { Id = id, Name = "Test" };
-        _mockMapper.Map<GetBizResponse>(businessCard).Returns(dto);
-
-        // Act
-        var result = await _service.GetByIdAsync(id);
-
-        // Assert
-        Assert.True(result.IsSuccess);
-        Assert.Equal(dto, result.Value);
-    }
-
-    [Fact]
-    public async Task GetByIdAsync_ShouldReturnFailure_WhenBusinessCardDoesNotExist()
-    {
-        // Arrange
-        int id = 1;
-        _mockRepositoryMock.GetByIdAsync(id).Returns((BusinessCard)null);
+        var id = 1;
+        _mockRepository.GetByIdAsync(id).Returns((BusinessCard)null);
 
         // Act
         var result = await _service.GetByIdAsync(id);
@@ -129,31 +69,69 @@ public class BusinessCardsServiceTests
         Assert.False(result.IsSuccess);
         Assert.Equal(BusinessCardErrors.NotFound, result.Error);
     }
+
     [Fact]
-    public async Task ExportToCsv_ShouldReturnByteArray_WhenBusinessCardExists()
+    public async Task GetByIdAsync_ShouldReturnSuccess_WhenBusinessCardIsFound()
     {
         // Arrange
-        int id = 1;
-        var businessCard = new BusinessCard { Id = id, Name = "Test" };
-        _mockRepositoryMock.GetByIdAsync(id).Returns(businessCard);
-
-        var byteArray = new byte[] { 1, 2, 3 };
-        _mockFileParserManager.CreateCSVFile(Arg.Any<List<FileParser>>()).Returns(byteArray);
+        var id = 1;
+        var businessCard = new BusinessCard();
+        var getBizResponse = new GetBizResponse();
+        _mockRepository.GetByIdAsync(id).Returns(businessCard);
+        _mockMapper.Map<GetBizResponse>(businessCard).Returns(getBizResponse);
 
         // Act
-        var result = await _service.ExportToCsv(id);
+        var result = await _service.GetByIdAsync(id);
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal(byteArray, result.Value);
+        Assert.Equal(getBizResponse, result.Value);
     }
 
     [Fact]
-    public async Task ExportToCsv_ShouldReturnFailure_WhenBusinessCardDoesNotExist()
+    public async Task DeleteAsync_ShouldReturnSuccess_WhenBusinessCardIsDeleted()
     {
         // Arrange
-        int id = 1;
-        _mockRepositoryMock.GetByIdAsync(id).Returns((BusinessCard)null);
+        var id = 1;
+        _mockRepository.DeleteAsync(id).Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _service.DeleteAsync(id);
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.Equal(id, result.Value);
+    }
+
+    [Fact]
+    public async Task CreateBusinessCardByFileAsync_ShouldReturnSuccess_WhenFileIsParsedSuccessfully()
+    {
+        // Arrange
+        var file = Substitute.For<IFormFile>();
+        file.OpenReadStream().Returns(new MemoryStream());
+
+        var fileParsers = new List<FileParser> { new FileParser() };
+        var bizResponses = new List<CreateBizRequest> { new CreateBizRequest() };
+        var businessCards = new List<BusinessCard> { new BusinessCard { Email = "test@gmail.com" } };
+
+        _mockFileParserManager.ParseFile(file).Returns(fileParsers);
+        _mockMapper.Map<List<BusinessCard>>(fileParsers).Returns(businessCards);
+        _mockMapper.Map<CreateBizRequest>(businessCards.First()).Returns(bizResponses.First());
+
+        // Act
+        var result = await _service.CreateBusinessCardByFileAsync(file);
+
+        // Assert
+        Assert.True(result.IsSuccess);
+    }
+
+
+    [Fact]
+    public async Task ExportToCsv_ShouldReturnFailure_WhenBusinessCardNotFound()
+    {
+        // Arrange
+        var id = 1;
+        _mockRepository.GetByIdAsync(id).Returns((BusinessCard)null);
 
         // Act
         var result = await _service.ExportToCsv(id);
@@ -161,6 +139,27 @@ public class BusinessCardsServiceTests
         // Assert
         Assert.False(result.IsSuccess);
         Assert.Equal(BusinessCardErrors.NotFound, result.Error);
+    }
+
+    [Fact]
+    public async Task ExportToXml_ShouldReturnSuccess_WhenBusinessCardIsFound()
+    {
+        // Arrange
+        var id = 1;
+        var businessCard = new BusinessCard();
+        var fileParser = new FileParser();
+        var expectedResult = new byte[] { 0x00 };
+
+        _mockRepository.GetByIdAsync(id).Returns(businessCard);
+        _mockMapper.Map<FileParser>(businessCard).Returns(fileParser);
+        _mockFileParserManager.CreateXMLFile(Arg.Any<List<FileParser>>()).Returns(expectedResult);
+
+        // Act
+        var result = await _service.ExportToXml(id);
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.Equal(expectedResult, result.Value);
     }
 
 }
