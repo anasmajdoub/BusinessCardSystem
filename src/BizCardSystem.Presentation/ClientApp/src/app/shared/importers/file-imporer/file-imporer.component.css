@@ -1,0 +1,65 @@
+/* Modal overlay to cover the entire screen */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Dark transparent background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* High z-index to appear above all other content */
+  }
+  
+  /* Modal container */
+  .drag-drop-form-container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+  }
+  
+  /* Drag and Drop Area Styling */
+  .drag-drop-area {
+    border: 2px dashed #6200ea; /* Purple dashed border */
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .drag-drop-area:hover {
+    background-color: #f5f5f5; /* Light grey background on hover */
+  }
+  
+  /* File input hidden for better UI */
+  #fileDrop {
+    display: none;
+  }
+  
+  .drag-drop-area label {
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+  }
+  
+ 
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+
+  .error-message {
+    color: #f44336;  
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: block;
+  }
+  

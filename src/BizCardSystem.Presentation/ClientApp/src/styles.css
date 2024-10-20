@@ -5,32 +5,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .example-spacer {
     flex: 1 1 auto;
   }
-  /* Toolbar container */
-mat-toolbar {
-    display: flex;
-    justify-content: space-between;  /* Ensures content is spaced between left and right */
-    align-items: center;  /* Vertically center items in the toolbar */
-    padding: 0 1rem;  /* Adds some horizontal padding */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* Adds subtle shadow for better visual separation */
-    height: 64px;  /* Ensures consistent toolbar height */
-  }
-  
-  /* Icon button inside the toolbar */
-  .example-icon {
-    margin-right: 1rem;  /* Adds space between the icon and the title */
-  }
-  
-  /* Title styling */
-  .example-toolbar-title {
-    font-size: 1.5rem;  /* Increases font size for a more prominent title */
-    font-weight: bold;  /* Makes title bold */
-     
-  }
-  
-  /* Spacer to push content to the right */
-  .example-spacer {
-    flex: 1;
-  }
+ 
+
+
+ 
   
   .example-container {
     display: flex;

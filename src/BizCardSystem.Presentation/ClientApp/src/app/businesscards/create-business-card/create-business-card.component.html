@@ -1,8 +1,15 @@
 <nav mat-tab-nav-bar class="import-nav">
-  <a mat-tab-link *ngFor="let link of ['Import XML', 'Import CSV', 'Import QR Code']" [routerLink]="link">
-    <mat-icon [matTooltip]="link">cloud_download</mat-icon> {{ link }}
+  <a mat-tab-link  (click)="showDragDrop()">
+    <mat-icon matTooltip="Import CSV">cloud_download</mat-icon> Import CSV or XML or Qr Code File
+  </a>
+  <a mat-tab-link (click)="showQrReader()">
+    <mat-icon matTooltip="Import QR Code">cloud_download</mat-icon> Import QR Code By Camera
   </a>
 </nav>
+
+<app-file-imporer *ngIf="showDragDropForm" (close)="hideFileImporter()" (businessCard)="saveBusinessCardByFile($event)"></app-file-imporer>
+ 
+<app-qr-code-imporer *ngIf="showQrCodeForm"  (close)="hideQrCodeImporter()" (scanned)="saveBusinessCardByQrCode($event)"></app-qr-code-imporer>
 
 <div class="form-container" *ngIf="!isFormSubmitted">
   <form [formGroup]="businessCardForm" (ngSubmit)="onSubmit()">
@@ -10,10 +17,10 @@
       <mat-label>Name</mat-label>
       <input matInput formControlName="name" [attr.required]="true">
     </mat-form-field>
-    <div *ngIf="businessCardForm.get('name')?.errors?.['required']" class="error red-text">
+    <div *ngIf="businessCardForm.get('name')?.invalid && (businessCardForm.get('name')?.touched || businessCardForm.get('name')?.dirty)" class="error red-text">
       Name is required.
     </div>
-    <div *ngIf="businessCardForm.get('name')?.errors?.['maxlength']" class="error red-text">
+    <div *ngIf="businessCardForm.get('name')?.hasError('maxlength') && (businessCardForm.get('name')?.touched || businessCardForm.get('name')?.dirty)" class="error red-text">
       Name cannot exceed 100 characters.
     </div>
 
@@ -23,10 +30,10 @@
         <mat-option *ngFor="let gender of genders let i = index" [value]="i+1">{{ gender }}</mat-option>
       </mat-select>
     </mat-form-field>
-    <div *ngIf="businessCardForm.get('gender')?.errors?.['required']" class="error red-text">
+    <div *ngIf="businessCardForm.get('gender')?.invalid && (businessCardForm.get('gender')?.touched || businessCardForm.get('gender')?.dirty)" class="error red-text">
       Gender is required.
     </div>
-    <div *ngIf="businessCardForm.get('gender')?.errors?.['genderInvalid']" class="error red-text">
+    <div *ngIf="businessCardForm.get('gender')?.hasError('genderInvalid') && (businessCardForm.get('gender')?.touched || businessCardForm.get('gender')?.dirty)" class="error red-text">
       Invalid gender selection.
     </div>
 
@@ -36,13 +43,13 @@
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
-    <div *ngIf="businessCardForm.get('dateOfBirth')?.errors?.['required']" class="error red-text">
+    <div *ngIf="businessCardForm.get('dateOfBirth')?.invalid && (businessCardForm.get('dateOfBirth')?.touched || businessCardForm.get('dateOfBirth')?.dirty)" class="error red-text">
       Date of birth is required.
     </div>
-    <div *ngIf="businessCardForm.get('dateOfBirth')?.errors?.['dateOfBirthInvalid']" class="error red-text">
+    <div *ngIf="businessCardForm.get('dateOfBirth')?.hasError('dateOfBirthInvalid') && (businessCardForm.get('dateOfBirth')?.touched || businessCardForm.get('dateOfBirth')?.dirty)" class="error red-text">
       Date of birth cannot be in the future.
     </div>
-    <div *ngIf="businessCardForm.get('dateOfBirth')?.errors?.['ageExceedsLimit']" class="error red-text">
+    <div *ngIf="businessCardForm.get('dateOfBirth')?.hasError('ageExceedsLimit') && (businessCardForm.get('dateOfBirth')?.touched || businessCardForm.get('dateOfBirth')?.dirty)" class="error red-text">
       Age cannot exceed 120 years.
     </div>
 
@@ -50,10 +57,10 @@
       <mat-label>Email</mat-label>
       <input matInput formControlName="email" type="email" [attr.required]="true">
     </mat-form-field>
-    <div *ngIf="businessCardForm.get('email')?.errors?.['required']" class="error red-text">
+    <div *ngIf="businessCardForm.get('email')?.invalid && (businessCardForm.get('email')?.touched || businessCardForm.get('email')?.dirty)" class="error red-text">
       Email is required.
     </div>
-    <div *ngIf="businessCardForm.get('email')?.errors?.['email']" class="error red-text">
+    <div *ngIf="businessCardForm.get('email')?.hasError('email') && (businessCardForm.get('email')?.touched || businessCardForm.get('email')?.dirty)" class="error red-text">
       Invalid email format.
     </div>
 
@@ -61,10 +68,10 @@
       <mat-label>Phone</mat-label>
       <input matInput formControlName="phone" [attr.required]="true">
     </mat-form-field>
-    <div *ngIf="businessCardForm.get('phone')?.errors?.['required']" class="error red-text">
+    <div *ngIf="businessCardForm.get('phone')?.invalid && (businessCardForm.get('phone')?.touched || businessCardForm.get('phone')?.dirty)" class="error red-text">
       Phone number is required.
     </div>
-    <div *ngIf="businessCardForm.get('phone')?.errors?.['phoneInvalid']" class="error red-text">
+    <div *ngIf="businessCardForm.get('phone')?.hasError('phoneInvalid') && (businessCardForm.get('phone')?.touched || businessCardForm.get('phone')?.dirty)" class="error red-text">
       Invalid phone number format.
     </div>
 
@@ -73,7 +80,7 @@
         <mat-label>Street</mat-label>
         <input matInput formControlName="street">
       </mat-form-field>
-      <div *ngIf="businessCardForm.get('address.street')?.errors?.['streetLength']" class="error red-text">
+      <div *ngIf="businessCardForm.get('address.street')?.hasError('streetLength') && (businessCardForm.get('address.street')?.touched || businessCardForm.get('address.street')?.dirty)" class="error red-text">
         Street cannot exceed 100 characters.
       </div>
 
@@ -81,7 +88,7 @@
         <mat-label>City</mat-label>
         <input matInput formControlName="city">
       </mat-form-field>
-      <div *ngIf="businessCardForm.get('address.city')?.errors?.['cityLength']" class="error red-text">
+      <div *ngIf="businessCardForm.get('address.city')?.hasError('cityLength') && (businessCardForm.get('address.city')?.touched || businessCardForm.get('address.city')?.dirty)" class="error red-text">
         City cannot exceed 50 characters.
       </div>
 
@@ -89,7 +96,7 @@
         <mat-label>State</mat-label>
         <input matInput formControlName="state">
       </mat-form-field>
-      <div *ngIf="businessCardForm.get('address.state')?.errors?.['stateLength']" class="error red-text">
+      <div *ngIf="businessCardForm.get('address.state')?.hasError('stateLength') && (businessCardForm.get('address.state')?.touched || businessCardForm.get('address.state')?.dirty)" class="error red-text">
         State cannot exceed 50 characters.
       </div>
 
@@ -97,7 +104,7 @@
         <mat-label>Zip Code</mat-label>
         <input matInput formControlName="zipCode">
       </mat-form-field>
-      <div *ngIf="businessCardForm.get('address.zipCode')?.errors?.['zipCodeFormat']" class="error red-text">
+      <div *ngIf="businessCardForm.get('address.zipCode')?.hasError('zipCodeFormat') && (businessCardForm.get('address.zipCode')?.touched || businessCardForm.get('address.zipCode')?.dirty)" class="error red-text">
         Invalid postal code format.
       </div>
 
@@ -105,7 +112,7 @@
         <mat-label>Country</mat-label>
         <input matInput formControlName="country">
       </mat-form-field>
-      <div *ngIf="businessCardForm.get('address.country')?.errors?.['countryLength']" class="error red-text">
+      <div *ngIf="businessCardForm.get('address.country')?.hasError('countryLength') && (businessCardForm.get('address.country')?.touched || businessCardForm.get('address.country')?.dirty)" class="error red-text">
         Country cannot exceed 50 characters.
       </div>
     </div>
@@ -116,13 +123,13 @@
       <div *ngIf="businessCardForm.get('photo')?.value">
         Selected file: {{ businessCardForm.get('photo')?.value?.name }}
       </div>
-      <div *ngIf="businessCardForm.get('photo')?.errors?.['required']" class="error red-text">
+      <div *ngIf="businessCardForm.get('photo')?.hasError('required') && (businessCardForm.get('photo')?.touched || businessCardForm.get('photo')?.dirty)" class="error red-text">
         The Photo is required.
       </div>
-      <div *ngIf="businessCardForm.get('photo')?.errors?.['photoInvalid']" class="error red-text">
+      <div *ngIf="businessCardForm.get('photo')?.hasError('photoInvalid') && (businessCardForm.get('photo')?.touched || businessCardForm.get('photo')?.dirty)" class="error red-text">
         The provided string is not a valid base64 string.
       </div>
-      <div *ngIf="businessCardForm.get('photo')?.errors?.['photoSizeInvalid']" class="error red-text">
+      <div *ngIf="businessCardForm.get('photo')?.hasError('photoSizeInvalid') && (businessCardForm.get('photo')?.touched || businessCardForm.get('photo')?.dirty)" class="error red-text">
         Image file size must be less than 1 MB.
       </div>
     </div>
@@ -131,19 +138,21 @@
   </form>
 </div>
 
+
+
 <div *ngIf="previewData" class="preview-section">
   <h3>Preview:</h3>
-  <img *ngIf="previewData?.photo" [src]="previewData.photo" alt="Business Card Photo" class="preview-image">
-  <p><strong>Name:</strong> {{ previewData?.name }}</p>
-  <p><strong>Gender:</strong> {{ previewData?.gender }}</p>
-  <p><strong>Date of Birth:</strong> {{ previewData?.dateOfBirth }}</p>
-  <p><strong>Email:</strong> {{ previewData?.email }}</p>
-  <p><strong>Phone:</strong> {{ previewData?.phone }}</p>
-  <p *ngIf="previewData?.address">
+  <img *ngIf="previewData.photo" [src]="previewData.photo" alt="Business Card Photo" class="preview-image">
+  <p><strong>Name:</strong> {{ previewData.name }}</p>
+  <p><strong>Gender:</strong> {{ previewData.gender }}</p>
+  <p><strong>Date of Birth:</strong> {{ previewData.dateofBirth | date }} </p>
+  <p><strong>Email:</strong> {{ previewData.email }}</p>
+  <p><strong>Phone:</strong> {{ previewData.phone }}</p>
+  <p *ngIf="previewData.address">
     <strong>Address:</strong>
-    {{ previewData?.address?.street }}, {{ previewData?.address?.city }},
-    {{ previewData?.address?.state }}, {{ previewData?.address?.zipCode }},
-    {{ previewData?.address?.country }}
+    {{ previewData.address.street }}, {{ previewData.address.city }},
+    {{ previewData.address.state }}, {{ previewData.address.zipCode }},
+    {{ previewData.address.country }}
   </p>
   <button mat-raised-button color="primary" (click)="onSave()">Save</button>
   <button mat-raised-button (click)="onBack()">Back</button>

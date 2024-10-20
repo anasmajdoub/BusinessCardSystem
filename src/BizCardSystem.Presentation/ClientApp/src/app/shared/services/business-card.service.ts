@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
  
 import { indexResult, ResultOf } from '../Core/Result';
 import { BusinessCard } from '../../modules/businesscards/BusinessCard';
+import { BusinessCardRequset } from '../../modules/businesscards/BusinessCardRequset';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +32,7 @@ export class BusinessCardService extends BaseService {
    let url = `${this.usingApiUrl(this.baseUrl).ApiUrl}ExportToXml/?id=${id}`;
    return this.usingApiUrl(this.baseUrl).getBlob(url, {responseType: 'blob' as 'blob'});
  }
- uploadFile(file:File) : Observable<Blob> {
+ uploadFile(file:File) : Observable<ResultOf<BusinessCardRequset>> {
 
    return this.usingApiUrl(this.baseUrl).uploadFile("CreateBusinessCardByFile",file);
  }

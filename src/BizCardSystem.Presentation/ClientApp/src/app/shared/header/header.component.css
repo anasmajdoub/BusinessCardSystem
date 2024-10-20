@@ -1,0 +1,33 @@
+mat-toolbar {
+    display: flex;
+    justify-content: space-between; /* Ensure content is spaced between left and right */
+    align-items: center; /* Vertically center items in the toolbar */
+    padding: 0 1rem; /* Adds horizontal padding */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    height: 64px; /* Toolbar height */
+  }
+.example-toolbar-title {
+  font-size: 1.5rem; /* Larger font size */
+  font-weight: bold; /* Bold title */
+  /* Title text color */
+}
+
+/* Spacer to push content to the right */
+.example-spacer {
+  flex-grow: 1;
+}
+
+/* Style the button */
+.create-btn {
+  
+  color: black; /* Primary color for text */
+  border-radius: 8px; /* Rounded corners */
+  padding: 8px 16px; /* Padding for better spacing */
+  font-weight: bold; /* Bold text */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+  width: 100px;
+}
+
+.create-btn:hover {
+  background-color: #e0e0e0; /* Slightly darker on hover */
+}

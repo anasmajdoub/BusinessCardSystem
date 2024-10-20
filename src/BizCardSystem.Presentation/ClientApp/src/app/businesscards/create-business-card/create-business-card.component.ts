@@ -9,20 +9,27 @@ import { BusinessCardRequset } from '../../modules/businesscards/BusinessCardReq
 import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ApiClient } from '../../shared/Api/api-client.service';
+import { FileImporerComponent } from "../../shared/importers/file-imporer/file-imporer.component";
+import { QrCodeImporerComponent } from "../../shared/importers/qr-code-imporer/qr-code-imporer.component";
+import { BusinessCard } from '../../modules/businesscards/BusinessCard';
 @Component({
   selector: 'app-create-business-card',
   standalone: true,
-  imports: [MaterialModule,HttpClientModule],
+  imports: [MaterialModule, HttpClientModule, FileImporerComponent, QrCodeImporerComponent],
   templateUrl: './create-business-card.component.html',
   styleUrl: './create-business-card.component.css',
   providers: [BusinessCardService,ApiClient,HttpClient]
 })
 export class CreateBusinessCardComponent {
+
   businessCardForm: FormGroup;
   genders = Object.keys(Gender).filter(key => isNaN(Number(key)));
-  previewData: any = null;
+  previewData: BusinessCardRequset| null=null;
   isFormSubmitted = false;
-  
+  showDragDropForm = false;
+  showQrCodeForm = false;
+  showBusinessCardForm = false;
+  scannedData: string | null = null;
 
   constructor(private fb: FormBuilder,private businessCardService:BusinessCardService,private router:Router) {
     this.businessCardForm = this.fb.group({
@@ -55,37 +62,33 @@ export class CreateBusinessCardComponent {
     }
   }
 
-  onDrop(event: CdkDragDrop<any[]>) {
-    console.log('Dropped files:', event);
-    // Handle drag-and-drop processing logic here
-  }
-
   onSubmit() {
     console.log(this.businessCardForm.errors);
     if (this.businessCardForm.valid) {
       this.isFormSubmitted = true;
       this.previewData = this.businessCardForm.value;
+    }else{
+      this.businessCardForm.markAllAsTouched();  
+      return; 
     }
   }
 
   onSave() {
-    console.log( this.businessCardForm.get('gender')?.value as number);
     const businessCardRequest: BusinessCardRequset = {
-      name: this.businessCardForm.get('name')?.value,
-      gender: this.businessCardForm.get('gender')?.value as number,
-      dateOfBirth: this.businessCardForm.get('dateOfBirth')?.value,
-      email: this.businessCardForm.get('email')?.value,
-      phone: this.businessCardForm.get('phone')?.value,
-      photo: this.businessCardForm.get('photo')?.value,
+      name: this.previewData?.name as string,
+      gender: this.previewData?.gender as number,
+      dateofBirth: this.previewData?.dateofBirth  as Date,
+      email: this.previewData?.email as string,
+      phone: this.previewData?.phone as string,
+      photo: this.previewData?.photo as string,
       address: {
-        street: this.businessCardForm.get('address.street')?.value,
-        city: this.businessCardForm.get('address.city')?.value,
-        state: this.businessCardForm.get('address.state')?.value,
-        zipCode: this.businessCardForm.get('address.zipCode')?.value,
-        country: this.businessCardForm.get('address.country')?.value
+        street: this.previewData?.address.street as string,
+        city: this.previewData?.address.city as string,
+        state: this.previewData?.address.state as string,
+        zipCode: this.previewData?.address.zipCode as string,
+        country: this.previewData?.address.country as string
       }
     };
-    console.log(businessCardRequest);
      this.businessCardService.Create(businessCardRequest).subscribe((result)=>{
            if(result){
             this.router.navigate(['/business-cards/Index']);
@@ -96,6 +99,38 @@ export class CreateBusinessCardComponent {
   onBack() {
     this.isFormSubmitted = false;
     this.previewData = null;
+  }
+  showDragDrop() {
+    this.showDragDropForm = true;
+    this.showQrCodeForm = false;
+    this.showBusinessCardForm = false;
+  }
+  hideFileImporter() {
+    this.showDragDropForm = false;
+    this.showQrCodeForm = false;
+    this.showBusinessCardForm = true;
+    }
+    hideQrCodeImporter()
+    {
+      this.showDragDropForm = false;
+      this.showQrCodeForm = false;
+      this.showBusinessCardForm = true;
+    }
+  showQrReader() {
+    this.showQrCodeForm = true;
+    this.showDragDropForm = false;
+    this.showBusinessCardForm = false;
+  }
+  saveBusinessCardByFile(businessCard:BusinessCardRequset){
+    this.hideFileImporter();
+    this.isFormSubmitted = true;
+    this.previewData = businessCard;
+  }
+  saveBusinessCardByQrCode(businessCard:string){
+    const businessCardObj: BusinessCardRequset = JSON.parse(businessCard);
+    this.hideFileImporter();
+    this.isFormSubmitted = true;
+    this.previewData = businessCardObj;
   }
 }
  

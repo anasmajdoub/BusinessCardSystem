@@ -30,7 +30,7 @@ import { MatTreeModule } from '@angular/material/tree';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatRadioModule } from '@angular/material/radio';
- 
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -69,7 +69,8 @@ import { RouterModule } from '@angular/router';
     MatDialogActions,
     MatDialogClose,
     MatDialogContent,
-    MatDialogTitle
+    MatDialogTitle,
+    ZXingScannerModule
   ],
   exports:[    
     CommonModule ,
@@ -94,7 +95,7 @@ import { RouterModule } from '@angular/router';
     MatDialogClose,
     MatDialogContent,
     MatDialogTitle,
-    
+    ZXingScannerModule 
   ]
 })
 export class MaterialModule { }

@@ -40,7 +40,6 @@ export function businessCardValidator(): ValidatorFn {
     const dateOfBirth = control.get('dateOfBirth');
     const email = control.get('email');
     const phone = control.get('phone');
-    const photo = control.get('photo');
     const address = control.get('address');
 
     const errors: ValidationErrors = {};
@@ -64,13 +63,6 @@ export function businessCardValidator(): ValidatorFn {
     if (phone && (!phone.value || !/^\+?[1-9]\d{1,14}$/.test(phone.value))) {
       errors['phoneInvalid'] = 'Invalid phone number format.';
     }
-
-    // if (photo && (!photo.value || !isValidBase64(photo.value))) {
-    //   errors['photoInvalid'] = 'The provided string is not a valid base64 string.';
-    // } else if (photo && !isLessThan1MB(photo.value)) {
-    //   errors['photoSizeInvalid'] = 'Image file size must be less than 1 MB.';
-    // }
-
     if (address) {
       const addressErrors = addressValidator()(address);
       if (addressErrors) {
@@ -82,17 +74,33 @@ export function businessCardValidator(): ValidatorFn {
   };
 }
 
-function isValidBase64(value: string): boolean {
-  try {
-    return btoa(atob(value)) === value;
-  } catch (err) {
-    return false;
-  }
-}
+export function base64ImageValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+ 
+    if (!value) {
+      return null;
+    }
 
-function isLessThan1MB(base64String: string): boolean {
-  const stringLength = base64String.length;
-  const sizeInBytes = 4 * Math.ceil(stringLength / 3) * 0.5624896334383812;
-  const sizeInMB = sizeInBytes / (1024 * 1024);
-  return sizeInMB < 1;
+ 
+    const base64Data = value.includes(',') ? value.split(',')[1] : value;
+
+    const base64Pattern = /^[A-Za-z0-9+/]+={0,2}$/;
+
+     if (base64Data.length % 4 !== 0) {
+      return { photoInvalid: 'The provided string is not a valid base64 string.' };
+    }
+
+     if (!base64Pattern.test(base64Data)) {
+      return { photoInvalid: 'The provided string is not a valid base64 string.' };
+    }
+
+     const sizeInBytes = (base64Data.length * 3) / 4;
+    const maxSizeInBytes = 1 * 1024 * 1024;
+    if (sizeInBytes > maxSizeInBytes) {
+      return { photoSizeInvalid: 'Image file size must be less than 1 MB.' };
+    }
+
+     return null;
+  };
 }

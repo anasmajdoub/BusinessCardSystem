@@ -1,0 +1,27 @@
+<div class="modal-overlay">
+  <div class="qr-reader-form-container">
+    <h3 class="modal-title">QR Code Import</h3>
+    <div class="scanner-container">
+      <zxing-scanner
+        #scanner
+        [(device)]="selectedDevice"
+        [formats]="allowedFormats"
+        [torch]="true" 
+        (scanSuccess)="onQrCodeScanned($event)"
+        (scanFailure)="onScanFailure($event)"
+        (camerasFound)="camerasFound($event)"
+        (camerasNotFound)="camerasNotFound($event)"
+        (permissionResponse)="onPermissionResponse($event)"
+      ></zxing-scanner>
+    </div>
+    <select *ngIf="availableDevices.length > 0" (change)="onDeviceSelect($event)" class="camera-select">
+      <option *ngFor="let device of availableDevices" [value]="device.deviceId" [selected]="device.deviceId === selectedDevice?.deviceId">
+        {{ device.label || 'Camera ' + device.deviceId }}
+      </option>
+    </select>
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <div class="button-group">
+      <button mat-raised-button color="warn" (click)="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>

@@ -43,6 +43,10 @@ public class QrCodeFileParser : IFileParser
         }
         return businessCards;
     }
-    public bool CanParse(string extension) => extension.Equals(".qr", StringComparison.OrdinalIgnoreCase);
+    public bool CanParse(string extension) =>
+    extension.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
+    extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+    extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+    extension.Equals(".gif", StringComparison.OrdinalIgnoreCase);
 }
 

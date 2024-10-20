@@ -4,7 +4,7 @@ import { Address } from "./Address";
 export interface BusinessCardRequset{
     name: string;
     gender: Gender;
-    dateOfBirth: Date;
+    dateofBirth: Date;
     email: string;
     phone: string;
     photo: string;
