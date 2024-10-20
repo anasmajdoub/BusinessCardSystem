@@ -16,16 +16,8 @@
 
 
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_BusinessCard_Email]
-    ON [dbo].[BusinessCard]([Email] ASC);
-
-
-GO
 CREATE NONCLUSTERED INDEX [IX_BusinessCard_Id]
     ON [dbo].[BusinessCard]([Id] ASC);
 
 
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_BusinessCard_Phone]
-    ON [dbo].[BusinessCard]([Phone] ASC);
-

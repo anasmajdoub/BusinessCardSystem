@@ -58,13 +58,10 @@ namespace BizCardSystem.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.HasIndex("Id");
 
-                    b.HasIndex("Phone")
-                        .IsUnique();
+
 
                     b.ToTable("BusinessCard");
                 });

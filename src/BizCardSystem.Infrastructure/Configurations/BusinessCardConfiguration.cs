@@ -9,7 +9,7 @@ public sealed class BusinessCardConfiguration : IEntityTypeConfiguration<Busines
     public void Configure(EntityTypeBuilder<BusinessCard> builder)
     {
         builder.HasIndex(businessCard => businessCard.Id);
-        builder.HasIndex(businessCard => businessCard.Email).IsUnique();
+        builder.HasIndex(businessCard => businessCard.Email);
 
         builder.Property(businessCard => businessCard.Name)
                .IsRequired()
@@ -37,6 +37,6 @@ public sealed class BusinessCardConfiguration : IEntityTypeConfiguration<Busines
                .HasMaxLength(1048576)
                .IsRequired(false);
 
-        builder.HasIndex(businessCard => businessCard.Phone).IsUnique();
+        builder.HasIndex(businessCard => businessCard.Phone);
     }
 }

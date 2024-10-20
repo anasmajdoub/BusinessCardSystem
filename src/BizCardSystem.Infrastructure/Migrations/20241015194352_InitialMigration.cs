@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -37,8 +36,7 @@ namespace BizCardSystem.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_BusinessCard_Email",
                 table: "BusinessCard",
-                column: "Email",
-                unique: true);
+                column: "Email");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BusinessCard_Id",
@@ -48,8 +46,7 @@ namespace BizCardSystem.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_BusinessCard_Phone",
                 table: "BusinessCard",
-                column: "Phone",
-                unique: true);
+                column: "Phone");
         }
 
         /// <inheritdoc />
